@@ -4,6 +4,7 @@ const express=require('express')
 const app=express()
 const cors=require("cors")
 const PORT=3000
+const jwt=require('jsonwebtoken')
 app.use(express.json())
 const corsOptions = {
     origin: true, 
@@ -51,6 +52,16 @@ app.get("/users",async(req,res)=>{
        }
     } catch (error) {
         res.status(500).json({ message: "Server error" });
+    }
+})
+app.post("/login",async(req,res)=>{
+    const user=req.body
+    const userDB=await User.findOne(user)
+    if(userDB.email===user.email && userDB.password===user.password){
+        const token=jwt.sign({role:"admin"},JWT_SECRET,{expiresIn:"24h"})
+        res.status(200).json({token})
+    }else{
+        res.json({message:"Invalid Secret"})
     }
 })
 app.listen(PORT,()=>{
