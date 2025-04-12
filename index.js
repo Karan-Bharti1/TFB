@@ -3,7 +3,7 @@ initialiseDatabase()
 const express=require('express')
 const app=express()
 const cors=require("cors")
-const PORT=5000
+const PORT=3000
 app.use(express.json())
 const corsOptions = {
     origin: true, 
@@ -39,3 +39,21 @@ try {
     res.status(500).json({message:"Failed To add user to database"})
 }
 })
+app.get("/users",async(req,res)=>{
+  
+    try {
+        const existingUsers = await User.find();
+       if(existingUsers){
+        const emailIds=existingUsers.map(user=>user.email)
+        res.status(200).json({emailIds })}
+       else{
+        res.status(404).json({message:"Users not found"})
+       }
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+})
+app.listen(PORT,()=>{
+    console.log( `App is running at ${PORT}`)
+  })
+  
