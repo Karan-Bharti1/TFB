@@ -168,6 +168,70 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
             res.status(500).json({message:"Failed to fetch Teams data"}) 
         }
     })
+    app.get("/tasks/projects/auth/:id",verifyJWT,async(req,res)=>{
+        const projects=await Task.find({project:req.params.id})
+       try {
+        if(projects){
+            res.status(200).json(projects)
+        }else{
+            res.status(404).json({message: "Projects not found"})
+        }
+       } catch (error) {
+        res.status(500).json({message:"Failed to fetch projects data"})
+       }
+    })
+    app.get("/tasks/auth",verifyJWT,async(req,res)=>{
+        try {
+            const filter = {};
+    
+            if (req.query.team) filter.team = req.query.team;
+    
+            if (req.query.owner) {
+    
+                const ownerIds = req.query.owner.split(",");
+                filter.owners = { $in: ownerIds };
+            }
+    
+            if (req.query.tags) {
+            
+                filter.tags = { $in: req.query.tags.split(",") };
+            }
+    
+            if (req.query.project) filter.project = req.query.project;
+            if (req.query.status) filter.status = req.query.status;
+    
+            const tasks = await Task.find(filter).populate("team owners");
+            res.status(200).json(tasks);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Failed to fetch tasks", error });
+        }
+    })
+    app.delete("/tasks/auth/:id",verifyJWT,async(req,res)=>{
+ 
+        try {
+            const deletedData=await Task.findByIdAndDelete(req.params.id) 
+            if(deletedData){
+                res.status(200).json({message:"Task deleted successfully",deletedData})
+            }else{
+    res.status(400).json({message:"Task does not exists"})
+            }
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Failed to delete tasks", error });
+            console.log()
+        }
+    })
+    app.post("/tasks/auth",verifyJWT,async(req,res)=>{
+        try {
+            const task = new Task(req.body);
+            const savedTask = await task.save();
+            res.status(200).json({ message: "Task created successfully", task: savedTask });
+        } catch (error) {
+            
+            res.status(500).json({ message: "Failed to create task", error });
+        }
+    })
 app.listen(PORT,()=>{
     console.log( `App is running at ${PORT}`)
   })
