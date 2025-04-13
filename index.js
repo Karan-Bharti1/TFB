@@ -232,6 +232,18 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
             res.status(500).json({ message: "Failed to create task", error });
         }
     })
+    app.put("/tasks/auth/:id",verifyJWT,async(req,res)=>{
+        try {
+            const updatedData=await Task.findByIdAndUpdate(req.params.id,req.body,{new:true})
+            if(updatedData){
+                res.status(200).json({message:"Data Updated Successfully",task:updatedData})
+            }else{
+                res.status(400).json({message:"Task not found"})
+            }
+        } catch (error) {
+            res.status(500).json({message:"Failed to update task data"})
+        }
+    })
 app.listen(PORT,()=>{
     console.log( `App is running at ${PORT}`)
   })
