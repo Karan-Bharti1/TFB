@@ -10,7 +10,7 @@ const corsOptions = {
     origin: true, 
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    allowedHeaders: ["Content-Type", "authorization", "X-Requested-With"],
     optionsSuccessStatus: 200  
 }
 app.use(cors(corsOptions))
@@ -20,6 +20,19 @@ const Tags=require("./models/Tag.models")
 const Project=require("./models/Project.models")
 const Team=require("./models/Teams.models")
 const Task=require('./models/Tasks.models')
+const verifyJWT=(req,res,next)=>{
+    const token=req.headers(['authorization'])
+    if(!token){
+        res.status(401).json({message:"No token was found"})
+    }
+    try {
+        const decodedToken=jwt.verify(token,JWT_SECRET)
+        req.user=decodedToken
+        next()
+    } catch (error) {
+       res.status(402).json({message:"Invalid Token"}) 
+    }
+}
 const ownerSignUp = async (data) => {
     try {
        
@@ -64,6 +77,19 @@ app.post("/login",async(req,res)=>{
         res.json({message:"Invalid Secret"})
     }
 })
+app.get("/get/auth/me",verifyJWT,async(req,res)=>{
+    const {email}=req.body;
+    try {
+        const userData=await User.findOne({email:email})
+        if(userData){
+            res.status(200).json({message:"User Details Fetched Successfully",userData})
+        }else{
+            res.status(400).json({message:"No User Found"})
+        }
+    } catch (error) {
+      res.status(500).json({message:"Failed to fetch user data"})  
+    }
+    })
 app.listen(PORT,()=>{
     console.log( `App is running at ${PORT}`)
   })
