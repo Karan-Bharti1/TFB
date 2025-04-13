@@ -244,6 +244,26 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
             res.status(500).json({message:"Failed to update task data"})
         }
     })
+    app.get("/report/lastweek",verifyJWT,async(req,res)=>{
+        const  currentDate=new Date()
+        currentDate.setHours(23,59,59,999)
+        const lastDate=new Date()
+        lastDate.setDate(currentDate.getDate()-7)
+        lastDate.setHours(0,0,0,0)
+        try {
+           const tasks =await Task.find({
+            status:"Completed",
+            updatedAt:{ $gte :lastDate,$lte: currentDate}
+           }) 
+           if(tasks.length>0){
+            res.status(200).json(tasks)
+           }else{
+            return res.status(404).json({ error: "No tasks completed in the last 7 days." });
+           }
+        } catch (error) {
+            return  res.status(500).json({ error: "Failed to fetch completed tasks in last 7 days." });
+        }
+    })
 app.listen(PORT,()=>{
     console.log( `App is running at ${PORT}`)
   })
