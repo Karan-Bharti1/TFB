@@ -21,7 +21,7 @@ const Project=require("./models/Project.models")
 const Team=require("./models/Teams.models")
 const Task=require('./models/Tasks.models')
 const verifyJWT=(req,res,next)=>{
-    const token=req.headers(['authorization'])
+    const token=req.headers['authorization']
     if(!token){
         res.status(401).json({message:"No token was found"})
     }
@@ -33,6 +33,7 @@ const verifyJWT=(req,res,next)=>{
        res.status(402).json({message:"Invalid Token"}) 
     }
 }
+
 const ownerSignUp = async (data) => {
     try {
        
@@ -89,6 +90,32 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
     } catch (error) {
       res.status(500).json({message:"Failed to fetch user data"})  
     }
+    })
+    app.post("/tags/auth",verifyJWT,async(req,res)=>{
+    
+        try {
+            const newTag= new Tags(req.body)
+            const saveTag=await newTag.save()
+            if(saveTag){
+                res.status(200).json({message:"Tag updated successfully",tag:saveTag})
+            }
+        } catch (error) {
+           res.status(500).json({message:"Failed to create new tag"}) 
+           console.log(error)
+        }
+    })
+    app.get("/tags/auth",verifyJWT,async(req,res)=>{
+        
+        try {
+            const tagdData= await Tags.find()
+            if(tagdData && tagdData.length>0){
+                res.status(200).json(tagdData)
+            }else{
+                res.status(400).json({message:"No tags found"})   
+            }
+        } catch (error) {
+           res.status(500).json({message:"Failed to fetch tags data"}) 
+        }
     })
 app.listen(PORT,()=>{
     console.log( `App is running at ${PORT}`)
