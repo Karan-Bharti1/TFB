@@ -143,6 +143,31 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
             res.status(500).json({message:"Failed to fetch Projects data"}) 
         }
     })
+    app.post("/teams/auth",verifyJWT,async(req,res)=>{
+        const data =req.body
+        try {
+         const newTeam=new Team(data)   
+         const savedTeam=await newTeam.save()
+         if(savedTeam){
+            res.status(200).json({message:"Team updated successfully",team:savedTeam})
+         }
+        } catch (error) {
+            console.log(error)
+        res.status(500).json({message:"failed to add team data"})  
+        }
+    })
+    app.get("/teams/auth",async(req,res)=>{
+        try {
+           const teams=await Team.find() 
+           if(teams){
+            res.status(200).json(teams)
+        }else{
+            res.status(400).json({message:"No Teams found"})   
+        }
+        } catch (error) {
+            res.status(500).json({message:"Failed to fetch Teams data"}) 
+        }
+    })
 app.listen(PORT,()=>{
     console.log( `App is running at ${PORT}`)
   })
