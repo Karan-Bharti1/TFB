@@ -21,12 +21,14 @@ const Project=require("./models/Project.models")
 const Team=require("./models/Teams.models")
 const Task=require('./models/Tasks.models')
 const verifyJWT=(req,res,next)=>{
-    const token=req.headers['authorization']
+    const token=req.headers["authorization"]
     if(!token){
         res.status(401).json({message:"No token was found"})
     }
+    console.log(token)
     try {
         const decodedToken=jwt.verify(token,JWT_SECRET)
+        console.log(decodedToken)
         req.user=decodedToken
         next()
     } catch (error) {
@@ -131,7 +133,7 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
         }
     })
     
-    app.get("/projects/auth",async(req,res)=>{
+    app.get("/projects/auth",verifyJWT,async(req,res)=>{
         try {
            const projects=await Project.find() 
            if(projects){
@@ -156,7 +158,7 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
         res.status(500).json({message:"failed to add team data"})  
         }
     })
-    app.get("/teams/auth",async(req,res)=>{
+    app.get("/teams/auth",verifyJWT,async(req,res)=>{
         try {
            const teams=await Team.find() 
            if(teams){
