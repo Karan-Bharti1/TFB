@@ -32,7 +32,7 @@ const verifyJWT=(req,res,next)=>{
         req.user=decodedToken
         next()
     } catch (error) {
-       res.status(401).json({message:"Invalid Token",error}) 
+       res.status(500).json({message:"Invalid Token",error}) 
     }
 }
 
