@@ -27,7 +27,7 @@ const verifyJWT=(req,res,next)=>{
     }
     console.log(token)
     try {
-        const decodedToken=jwt.verify(${token},JWT_SECRET)
+        const decodedToken=jwt.verify(token,JWT_SECRET)
         console.log(decodedToken)
         req.user=decodedToken
         next()
