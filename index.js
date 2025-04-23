@@ -21,13 +21,14 @@ const Project=require("./models/Project.models")
 const Team=require("./models/Teams.models")
 const Task=require('./models/Tasks.models')
 const verifyJWT=(req,res,next)=>{
-    const token=req.headers["Authorization"]
+    const token=req.headers["authorization"]
+    console.log(token)
     if(!token){
         res.status(401).json({message:"No token was found"})
     }
-    console.log(token)
+   const authToken=token.split(' ')['1']
     try {
-        const decodedToken=jwt.verify(token,JWT_SECRET)
+        const decodedToken=jwt.verify(authToken,JWT_SECRET)
         console.log(decodedToken)
         req.user=decodedToken
         next()
