@@ -203,15 +203,14 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
     
             if (req.query.owner) {
     
-                const ownerIds = req.query.owner.split(",");
-                filter.owners = { $in: ownerIds };
+               
+                filter.owners = req.query.owner
             }
     
-            if (req.query.tags) {
-            
-                filter.tags = { $in: req.query.tags.split(",") };
+            if (req.query.tag) {
+                filter.tags = req.query.tag;
             }
-    
+         
             if (req.query.project) filter.project = req.query.project;
             if (req.query.status) filter.status = req.query.status;
     
