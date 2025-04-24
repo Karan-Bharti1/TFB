@@ -71,6 +71,18 @@ app.get("/users",async(req,res)=>{
         res.status(500).json({ message: "Server error" });
     }
 })
+app.get("/users/auth",verifyJWT,async(req,res)=>{
+const usersData=await User.find()
+try {
+    if(usersData){
+        res.status(200).json(usersData)
+    }else{
+        res.status(400).json({message:"No Users were  Found"})
+    }
+} catch (error) {
+    res.status(500).json({message:"Failed to fetch user data"})  
+}
+})
 app.post("/login",async(req,res)=>{
     const user=req.body
     const userDB=await User.findOne(user)
