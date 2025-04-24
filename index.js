@@ -26,7 +26,7 @@ const verifyJWT=(req,res,next)=>{
     if(!token){
         res.status(401).json({message:"No token was found"})
     }
-   const authToken=token.split(' ')['1']
+   const authToken=token.split(' ')[1]
     try {
         const decodedToken=jwt.verify(authToken,JWT_SECRET)
         console.log(decodedToken)
