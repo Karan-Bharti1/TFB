@@ -9,7 +9,7 @@ const taskSchema = new mongoose.Schema({
     owners: [
     { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Refers to User model (owners)
     ],
-    tags: [{ type: mongoose.Schema.Types.ObjectId, ref:"TagsTask"}], // Array of tags
+    tags: [{ type: mongoose.Schema.Types.ObjectId, ref:"TagsTak"}], // Array of tags
     timeToComplete: { type: Number, required: true }, // Number of days to complete the task
     status: {
     type: String,
