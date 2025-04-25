@@ -214,7 +214,11 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
             if (req.query.project) filter.project = req.query.project;
             if (req.query.status) filter.status = req.query.status;
     
-            const tasks = await Task.find(filter).populate("team owners");
+  const tasks = await Task.find(filter)
+            .populate("team")          
+            .populate("owners")         
+            .populate("tags")           
+            .populate("project");  
             res.status(200).json(tasks);
         } catch (error) {
             console.error(error);
