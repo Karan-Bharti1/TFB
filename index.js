@@ -217,8 +217,11 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
   const tasks = await Task.find(filter)
             .populate("team")          
             .populate("owners")         
-            .populate("tags")           
-            .populate("project");  
+            .populate("project")
+            .populate({
+              path: "owners",
+              select: "name email" // include only name and email, exclude password
+            })
             res.status(200).json(tasks);
         } catch (error) {
             console.error(error);
