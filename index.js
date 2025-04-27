@@ -195,6 +195,18 @@ app.get("/get/auth/me",verifyJWT,async(req,res)=>{
         res.status(500).json({message:"Failed to fetch projects data"})
        }
     })
+    app.get("/tasks/teams/auth/:id",verifyJWT,async(req,res)=>{
+        const teams=await Task.find({team:req.params.id})
+       try {
+        if(teams){
+            res.status(200).json(teams)
+        }else{
+            res.status(404).json({message: "Teams not found"})
+        }
+       } catch (error) {
+        res.status(500).json({message:"Failed to fetch teams data"})
+       }
+    })
     app.get("/tasks/auth",verifyJWT,async(req,res)=>{
         try {
             const filter = {};
